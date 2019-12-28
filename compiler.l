@@ -113,7 +113,6 @@ L?\"(\\.|[^\\"\n])*\"	{ count();  yylval.gt =create_tree("STRING_LITERAL",0,yyli
 "("		{ count(); yylval.gt =create_tree("(",0,yylineno);	return('('); }
 ")"		{ count(); yylval.gt =create_tree(")",0,yylineno);	return(')'); }
 
-"$"		{ count(); yylval.gt =create_tree("$",0,yylineno);	return('$'); }
 
 [\t\v\n\f ]		{ count();}
 .			{ /* Add code to complain about unmatched characters */ }
