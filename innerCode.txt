@@ -1,0 +1,41 @@
+FUNCTION delay :
+temp0 := #10
+var0 := temp0
+temp1 := #30000
+var0 := temp1
+LABEL label0 :
+temp2 := #0
+IF var0 > temp2 GOTO label1
+GOTO label2
+LABEL label1 :
+temp4 := #1
+temp5 := var0 - temp4
+var0 := temp5
+GOTO label0
+LABEL label2 :
+FUNCTION main :
+temp6 := #0
+var1 := temp6
+LABEL label3 :
+temp7 := #1
+temp8 := #0
+IF temp7 != temp8 GOTO label4
+GOTO label5
+LABEL label4 :
+temp9 := #1
+temp10 := var1 + temp9
+var1 := temp10
+*var-1 := var1
+temp15 := #16
+temp16 := var1 >> temp15
+*var-1 := temp16
+temp17 := #10
+IF var1 > temp17 GOTO label6
+GOTO label7
+LABEL label6 :
+temp19 := #0
+var1 := temp19
+LABEL label7 :
+CALL delay
+GOTO label3
+LABEL label5 :
