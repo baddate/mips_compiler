@@ -25,16 +25,20 @@ LABEL label4 :
 temp9 := #1
 temp10 := var1 + temp9
 var1 := temp10
-var-1 := var1
-temp13 := #16
-temp14 := var1 >> temp13
-var-1 := temp14
-temp15 := #10
-IF var1 > temp15 GOTO label6
+temp11 := #3
+*var1 := temp11
+temp12 := #-928
+*temp12 := var1
+temp13 := #-926
+temp14 := #16
+temp15 := var1 >> temp14
+*temp13 := temp15
+temp16 := #10
+IF var1 > temp16 GOTO label6
 GOTO label7
 LABEL label6 :
-temp17 := #0
-var1 := temp17
+temp18 := #0
+var1 := temp18
 LABEL label7 :
 CALL delay
 GOTO label3

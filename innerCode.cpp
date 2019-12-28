@@ -57,12 +57,12 @@ string InnerCode::createCodeforAssign(varNode node1, varNode node2) {
 	string result;
 	if (node1.useAddress) {
 		cout<<"test$1"<<endl;
-		regex pattern("0[xX][0-9a-fA-F]+",regex::icase);
+		// regex pattern("0[xX][0-9a-fA-F]+",regex::icase);
 
-		if(!regex_match(node1.name, pattern)) {
-			result = "*var" + inttostr(node1.num) + " := ";
-		}
-		else
+		// if(!regex_match(node1.name, pattern)) {
+		// 	result = "*" + node1.name + " := ";
+		// }
+		// else
 			result = "*" + node1.name + " := ";
 	}
 	else {

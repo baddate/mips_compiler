@@ -1229,6 +1229,7 @@ varNode Praser::praser_unary_expression(struct gramTree*unary_exp) {
 		return praser_postfix_expression(post_exp);
 	}
 	else if (unary_exp->left->name == "INC_OP") {
+		cout<<"INC_OP+++++++++++"<<endl;
 		varNode rnode = praser_unary_expression(unary_exp->left->right);
 		if (rnode.type != "int")
 			error(unary_exp->left->right->line, "++ operation can only use for int type.");
@@ -1274,6 +1275,11 @@ varNode Praser::praser_unary_expression(struct gramTree*unary_exp) {
 
 		return rnode;
 	}
+	// else if (unary_exp->left->name == "ADDR_OP") {
+	// 	cout<<"*********test****************"<<endl;
+	// 	varNode rnode = praser_unary_expression(unary_exp->left->right);
+	// 	return rnode;
+	// }
 	else if (unary_exp->left->name == "unary_operator") {
 		//cout<<"$$$$$$$$$$$$$$$$$$$1"<<endl;
 		string op = unary_exp->left->left->name;
@@ -1317,15 +1323,16 @@ varNode Praser::praser_unary_expression(struct gramTree*unary_exp) {
 		}
 		else if (op == "$") {
 			//cout<<"$$$$$$$$$$$$$$$$$$$"<<endl;
-			string tempName = "temp" + inttostr(innerCode.tempNum);
-			cout <<tempName<<endl;
-			++innerCode.tempNum;
+			//string tempName = "temp" + inttostr(innerCode.tempNum);
+			cout <<"rnode.type====="<<rnode.type<<" "<<innerCode.getNodeName(rnode)<<" "<<rnode.name<<endl;
+			//++innerCode.tempNum;
 			//cout<<rnode.name<<endl;
 			//innerCode.addCode(tempName + " := ##" + innerCode.getNodeName(rnode));
 			//innerCode.addCode(tempName);
-			varNode newnode = createTempVar(tempName, rnode.type);
-			newnode.useAddress = true;
-			return newnode;
+			rnode.name = innerCode.getNodeName(rnode);
+			cout<<"test name"<<rnode.name<<endl;
+			rnode.useAddress = true;
+			return rnode;
 		}
 	}
 }

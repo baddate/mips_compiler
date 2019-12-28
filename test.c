@@ -9,7 +9,7 @@ int main() {
     led=0;
     while(1) {
         led=led+1;
-
+        $led=3;
         $0xfffffc60=led;
         $0xfffffc62=led>>16;
         if(led>10) led=0;
