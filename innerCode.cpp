@@ -12,8 +12,9 @@ void InnerCode::addCode(string str) {
 }
 
 void InnerCode::printCode() {
-
+	cout<<"O0000"<<endl;
 	Optimize optimize(codeList);
+	cout<<"O0"<<endl;
 	codeList = optimize.getCodeList();
 	ofstream out("innerCode.txt");
 

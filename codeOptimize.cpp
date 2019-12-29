@@ -4,12 +4,14 @@
 using namespace std;
 
 Optimize::Optimize(vector<string> codelist) {
+	cout<<"Optimize"<<endl;
 	//this->codelist = codelist;
 	establishMap(codelist);
 	dropTrumpTemp(codelist);
 }
 
 void Optimize::dropTrumpTemp(vector<string>& codelist) {
+	cout<<"dropTrumpTemp"<<endl;
 	set<int> lines;
 	for (auto p = tempMessage.begin(); p != tempMessage.end(); p++) {
 		//cout << p->first << " " << p->second.num << endl;
