@@ -630,7 +630,7 @@ struct gramTree* Praser::praser_function_definition(struct gramTree* node) {
 
 	//函数结束后，弹出相应的block
 	blockStack.pop_back();
-
+	//innerCode.addCode("END FUNCTION " + funcName);
 	return node->right;
 }
 
@@ -725,6 +725,7 @@ void Praser::praser_init_declarator(string vartype, struct gramTree* node) {
 	if (!declarator->right) {
 		//获取变量的名字
 		if (declarator->left->name == "IDENTIFIER") {
+			cout <<"test init"<<endl;
 			struct gramTree* id = declarator->left;
 			string var = id->content;
 			if (!lookupCurruntVar(var)) {
@@ -883,61 +884,61 @@ varNode Praser::praser_assignment_expression(struct gramTree* assign_exp) {	//�
 
 			blockStack.back().varMap.insert({ tempname,node3 });
 
-			if (op == "MUL_ASSIGN") { //*=
+			if (op == "MUL_ASSIGN") { // *=
 				if (node1.type != node2.type) {
 					error(assign_exp->left->line, "Different type for two variables.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "*", node1, node2));
 			}
-			else if (op == "DIV_ASSIGN") { //*=
+			else if (op == "DIV_ASSIGN") { // /=
 				if (node1.type != node2.type) {
 					error(assign_exp->left->line, "Different type for two variables.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "/", node1, node2));
 			}
-			else if (op == "MOD_ASSIGN") { //*=
+			else if (op == "MOD_ASSIGN") { // %=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "%", node1, node2));
 			}
-			else if (op == "ADD_ASSIGN") { //*=
+			else if (op == "ADD_ASSIGN") { // +=
 				if (node1.type != node2.type) {
 					error(assign_exp->left->line, "Different type for two variables.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "+", node1, node2));
 			}
-			else if (op == "SUB_ASSIGN") { //*=
+			else if (op == "SUB_ASSIGN") { // -=
 				if (node1.type != node2.type) {
 					error(assign_exp->left->line, "Different type for two variables.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "-", node1, node2));
 			}
-			else if (op == "LEFT_ASSIGN") { //*=
+			else if (op == "LEFT_ASSIGN") { // <=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "<<", node1, node2));
 			}
-			else if (op == "RIGHT_ASSIGN") { //*=
+			else if (op == "RIGHT_ASSIGN") { // >=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, ">>", node1, node2));
 			}
-			else if (op == "AND_ASSIGN") { //*=
+			else if (op == "AND_ASSIGN") { // &=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "&", node1, node2));
 			}
-			else if (op == "XOR_ASSIGN") { //*=
+			else if (op == "XOR_ASSIGN") { // ^=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}
 				innerCode.addCode(innerCode.createCodeforVar(tempname, "^", node1, node2));
 			}
-			else if (op == "OR_ASSIGN") { //*=
+			else if (op == "OR_ASSIGN") { // |=
 				if (node1.type != "int" || node2.type != "int") {
 					error(assign_exp->left->line, "The two variables must be int.");
 				}

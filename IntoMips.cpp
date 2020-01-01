@@ -18,10 +18,9 @@ using namespace std;
 // string getReg();
 
 /* 全局变量 */
-string Reg[17] = ["$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9", 
-	"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"];
-// string sReg[8] = ["$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"];
-string aReg[4] = ["$a0", "$a1", "$a2", "$a3"];
+string tReg[9] = {"$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
+string sReg[8] = {"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"};
+string aReg[4] = {"$a0", "$a1", "$a2", "$a3"};
 // string vReg[2] = ["$v0", "$v1"];
 
 // map<string,string> params; //funcname param
@@ -31,13 +30,18 @@ string aReg[4] = ["$a0", "$a1", "$a2", "$a3"];
 regex regtemp("temp\\d+",regex::icase);
 regex regvar("var\\d+",regex::icase);
 regex regnum("#\\d+",regex::icase);
-
+regex regaddr("\\*temp\\d+",regex::icase);
 vector<string> tokenVal;
 vector<string> tempVal;
-int reg_ok[18] = {0}; //
+vector<string> labelVal;
+vector<string> globalVal;
+int treg_ok[9] = {0};
+int sreg_ok[8] = {0};
+int areg_ok[4] = {0};
+
 map<string, string> regTable; //变量名&寄存器名
 
-
+int argnum=0;
 
 
 vector<string> split(const string &str, const string &pattern)
@@ -61,72 +65,169 @@ vector<string> split(const string &str, const string &pattern)
     return res;
 }
 
-bool loadToken(string srcfile) {
-	string data;
-	ifstream infile; 
-	infile.open(srcfile);
-	infile >> data;
-	while(data) {
-		tokenVal.push_back(data);
-	}
-	return true;
-}
+// bool loadToken(string srcfile) {
+// 	string data;
+// 	ifstream infile; 
+// 	infile.open(srcfile);
+// 	infile >> data;
+// 	while(infile.eof()) {
+// 		tokenVal.push_back(data);
+// 	}
+// 	return true;
+// }
 
-string loadVarReg(vector<string> vari) {
-	for(int i=0;i<vari.size();i++) {
-		if(regex_match(vari[i], regtemp)) {
-			tempVal.push_back(vari[i]);
-		}
-	}
-}
 
+
+// string loadVarReg(vector<string> vari) {
+// 	for(int i=0;i<vari.size();i++) {
+// 		if(regex_match(vari[i], regtemp)) {
+// 			tempVal.push_back(vari[i]);
+// 		}
+// 	}
+// }
+
+// void loadLabel(string srcfile) {
+// 	string data;
+// 	ifstream infile; 
+// 	infile.open(srcfile);
+// 	infile >> data;
+// 	while(infile.eof()) {
+// 		if(data == "LABEL") {
+// 			infile >> data;
+// 			labelVal.push_back(data);
+// 		}
+// 		infile >> data;
+// 	}
+// }
+// string getLabel(string str) {
+// 	int len = labelVal.size();
+// 	while(len != 0) {
+// 		if(labelVal[len] == str) {
+// 			return str;
+// 		}
+// 	}
+// }
 string getReg(string str) {
-	tempVal.pop_back(str);
+	//tempVal.pop_back(str);
 	if(regTable.find(str) != regTable.end()) {
 		return regTable.find(str)->second;
 	}
 	else {
-		if(regex_match(str,regtemp) && count(tempVal.begin(),tempVal.end(), str) == 0) {
-			reg_ok[str.substr(1, str.size())] = 0;
-			iterator iter = regTable.find(str);
-			iter.remove();
+		if(regex_match(str,regtemp)) {
+			for(int i=0;i<9;i++) {
+				if(!treg_ok[i]) {
+					regTable.insert({str, tReg[i]});
+					treg_ok[i]=1;
+					return tReg[i];
+				}
+				if(i == 8) { //都分配过了
+					for(int j=0;j<9;j++) {
+						treg_ok[j] = 0;
+					}
+					regTable.insert({str, tReg[i]});
+					treg_ok[i]=1;
+					return tReg[i];
+				}
+			}
 		} 
-		for(int i=0;i<17;i++) {
-			if(!reg_ok[i]) {
-				regTable.insert({str, Reg[i]});
-				reg_ok[i]=1;
-				return Reg[i];
+		else if(regex_match(str,regvar)) {
+			for(int i=0;i<8;i++) {
+				if(!treg_ok[i]) {
+					regTable.insert({str, sReg[i]});
+					sreg_ok[i]=1;
+					return tReg[i];
+				}
+				if(i == 7) { //都分配过了
+					for(int j=0;j<8;j++) {
+						sreg_ok[j] = 0;
+					}
+					regTable.insert({str, sReg[i]});
+					sreg_ok[i]=1;
+					return sReg[i];
+				}
 			}
 		}
-		// 分配内存
-
+		else
+			return "-1";
 	}
 }
 
-string translate(vector<string> token string filename) {
+void getGlobalVar(string srcfile) {
+	string data;
+	ifstream infile; 
+	infile.open(srcfile);
+	// ofstream outfile;
+	// outfile.open(dstfile);
+	infile >> data;
+	while(infile.eof() && data != "FUNCTION") {
+		if(regex_match(data,regvar)) {
+			globalVal.push_back(data);
+		}
+	}
+}
+bool findGlobal(string str) {
+	for(int i=0;i< globalVal.size();i++) {
+		if(str == globalVal[i]) 
+			return true;
+	}
+	return false;
+}
+void translate(string filename) {
 	string data;
 	ifstream infile; 
 	infile.open(filename);
 	ofstream outfile;
 	outfile.open("mips.asm");
+	cout <<"open it"<<endl;
 	vector<string> line;
+	getGlobalVar(filename);
 	if(infile) {
+		cout <<"if "<<endl;
 		while(getline(infile, data)) {
+			//cout <<"while "<<endl;
 			srand((unsigned)time(NULL));
 			string offset = inttostr(rand()+1);
 			line = split(data, " ");
-			if(line[0] == "LABEL" || line[0] == "FUNCTION") {
+			// for(int i=0;i<line.size();i++) {
+			// 	cout <<"     "<<line[i]<<endl;
+			// }
+			if(line[0] == "LABEL") {
 				outfile << line[1] << ":\n";
+			}
+			else if(line[0] == "FUNCTION") {
+				cout <<"FUNC"<<endl;
+				outfile << line[1] << ":\n";
+				if(line[1] == "main") {
+					outfile << "\tsw $sp,0($sp)\n\tsw $fp, 8($sp)\n\taddi $sp, $sp, 8\n\taddi $fp, $sp, 12\n";
+				}
 			}
 			else if(line[1] == ":=") {
 				if(line.size() == 3) {
 					if(regex_match(line[2], regnum)) { // #
+						cout<<line[0] <<"==============="<<endl;
+						
+
 						outfile << "\taddi " << getReg(line[0]) << ", $Zero, " << line[2].substr(1,line[2].size()) << "\n";
+						cout << "\taddi " << getReg(line[0]) << ", $Zero, " << line[2].substr(1,line[2].size()) << "\n";
+
+						
 					}
 					else {
-						int num = strtoint(substr(3,line[0].size()));
-						outfile << "\tsw " << getReg(line[2]) << ", " << offset << "($Zero)\n";
-						outfile << "\tlw " << aReg[num] << ", " << offset << "($Zero)\n";
+						if(findGlobal(line[0])) {
+							outfile << "\tsw " << getReg(line[2]) << ", 0($sp)\n";
+							outfile << "\taddi $sp, $sp, 4\n";
+						} 
+						else if(regex_match(line[0], regaddr)) {
+							cout <<"dizhi----------"<<line[2] <<" "<<line[0].substr(1,line[0].size())<<endl;
+							outfile <<"\tsw " << getReg(line[2]) << ", " << line[0].substr(1,line[0].size())
+							<<"($Zero)\n";
+							cout <<"edizhi----------"<<endl;
+						}
+						else {
+							outfile << "\tsw " << getReg(line[2]) << ", " << offset << "($Zero)\n";
+							outfile << "\tlw " << getReg(line[0]) << ", " << offset << "($Zero)\n";
+						}
+						
 					}
 				}
 				else if(line.size() == 5) {
@@ -152,18 +253,58 @@ string translate(vector<string> token string filename) {
 					else if(line[3] == ">") {
 						outfile << "\tslt " << getReg(line[0]) << ", " << getReg(line[4]) << ", " <<getReg(line[2]) << "\n";
 					}
+					else if(line[3] == "<<") {
+						// outfile << "\tslt " << getReg(line[0]) << ", " << getReg(line[4]) << ", " <<getReg(line[2]) << "\n";
+						outfile << "\tsllv " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
+					}
+					else if(line[3] == ">>") {
+						cout <<"youyi-----------------" <<endl;
+						// outfile << "\tslt " << getReg(line[0]) << ", " << getReg(line[4]) << ", " <<getReg(line[2]) << "\n";
+						outfile << "\tslrv " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
+					}
 				}
 				else if(line[2] == "CALL") {
-					outfile << "\taddi $sp,$sp,-24\n\tsw $t0,0($sp)\n\tsw $ra,4($sp)\n\tsw $t1,8($sp)\n\tsw $t2,12($sp)\n
-					\tsw $t3,16($sp)\n\tsw $t4,20($sp)\n\tjal %s\n\tlw $a0,0($sp)\n\tlw $ra,4($sp)\n
-					\tlw $t1,8($sp)\n\tlw $t2,12($sp)\n\tlw $t3,16($sp)\n\tlw $t4,20($sp)\n\taddi $sp,$sp,24\n
-					\tjal " << line[3] << "\n";
+					//outfile << "\tsw $sp, "
+					outfile << "\taddi $sp, $sp, 4\n\tsw $sp,0($sp)\n\tsw $ra, 4($sp)\n\tsw $fp, 8($sp)\n\tjal " 
+					<< line[3] << "\n";
 				}
 
 			}
+			else if(line[0] == "IF") {
+				if(line[2] == "==") { //
+					outfile << "\tbeq " << getReg(line[1]) << ", " << getReg(line[3]) << ", " << line[5] <<"\n";
+				}
+				else if (line[2] == "!=")
+				{
+					outfile << "\tbne " << getReg(line[1]) << ", " << getReg(line[3]) << ", " << line[5] <<"\n";
+				}
+				else if (line[2] == "<=") /////可能有问题
+				{
+					outfile << "\tsub $t0, " << getReg(line[1]) << ", " << getReg(line[3]) <<"\n";
+					outfile << "\tblgz $t0, " << line[5] <<"\n";
+				}
+				else if (line[2] == ">=")
+				{
+					//outfile << "\tslt " << "" << getReg(line[5]) << ", " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
+					outfile << "\tslt $t0" << ", " << getReg(line[1]) << ", " <<getReg(line[3]) << "\n";
+					outfile << "\tblez $t0, " << line[5] << "\n";
+				}
+				else if (line[2] == "<")
+				{
+					outfile << "\tslt $t0" << ", " << getReg(line[1]) << ", " <<getReg(line[3]) << "\n";
+					outfile << "\tbgtz $t0, " << line[5] << "\n";
+				}
+				else if (line[2] == ">")
+				{
+					cout <<"test if >" <<endl;
+					outfile << "\tsub $t0, " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
+					outfile << "\tblgz $t0, " << line[5] <<"\n";
+				}
+			}
 			else if(line[0] == "PARAM") {
-				int num = strtoint(substr(3,line[1].size()));
-				regTable.insert({line[1], aReg[num]});
+				outfile <<"\taddi $sp, $sp, -4\n\tsw $sp, " << aReg[argnum] <<"\n";
+				regTable.insert({line[1], aReg[argnum]});
+				argnum--;
 			}
 			else if(line[0] == "GOTO") {
 				outfile << "\tj " << line[1] << "\n";
@@ -172,39 +313,15 @@ string translate(vector<string> token string filename) {
 				
 			}
 			else if(line[0] == "ARG") {
-				int num = strtoint(substr(3,line[1].size()));
-
+				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 4($sp)\n";
+				argnum++;
 			}
 			else if(line[0] == "CALL") {
-
+				outfile << "\taddi $sp, $sp, 4\n\tsw $sp,0($sp)\n\tsw $ra, 4($sp)\n\tsw $fp, 8($sp)\n\tjal " 
+					<< line[1] << "\n";
 			}
 			else if(line[0] == "RETURN") {
-				
-			}
-			else if(line[0] == "IF") {
-				if(line[2] == "==") { //
-					outfile << "\tbeq " <<getReg(line[1]) << ", " << getReg(line[3]) << ", " << <<"\n";
-				}
-				else if (line[2] == "!=")
-				{
-					outfile << "\tbne " <<getReg(line[1]) << ", " << getReg(line[3]) << ", " << <<"\n";
-				}
-				else if (line[2] == "<=")
-				{
-					
-				}
-				else if (line[2] == ">=")
-				{
-					
-				}
-				else if (line[2] == "<")
-				{
-					
-				}
-				else if (line[2] == ">")
-				{
-					outfile << "\tslt " << getReg(line[0]) << ", " << getReg(line[4]) << ", " <<getReg(line[2]) << "\n";
-				}
+				outfile << "\tlw $sp,0($sp)\n\tlw $ra, 4($sp)\n\tlw $fp, 8($sp)\n\t j $ra";
 			}
 		}
 	}
@@ -382,3 +499,7 @@ string translate(vector<string> token string filename) {
 // 		return true;
 // 	return false;
 // }
+
+int main() {
+	translate("innerCode.txt");
+}

@@ -1,12 +1,20 @@
+int gol=1;
+
+char a;
 void delay() {
     int c = 10;
     c=30000;
     while(c>0) c=c-1;
 }
 int test(int m) {
-    return m+1;
+    if(m > 0) 
+        m=m-1;
+    else
+        m+=1;
 }
+
 int main() {
+    a=0x11;
     int led=0;
     while(1) {
         led=led+1;
@@ -16,4 +24,5 @@ int main() {
         if(led>10) led=0;
         delay();
     }
+    return 0;
 }
