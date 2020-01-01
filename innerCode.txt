@@ -1,74 +1,70 @@
-temp0 := #1
-var0 := temp0
 FUNCTION delay :
-temp1 := #10
-var2 := temp1
-temp2 := #30000
-var2 := temp2
+temp0 := #10
+var0 := temp0
+temp1 := #30000
+var0 := temp1
 LABEL label0 :
-temp3 := #0
-IF var2 > temp3 GOTO label1
+temp2 := #0
+IF var0 > temp2 GOTO label1
 GOTO label2
 LABEL label1 :
-temp5 := #1
-temp6 := var2 - temp5
-var2 := temp6
+temp4 := #1
+temp5 := var0 - temp4
+var0 := temp5
 GOTO label0
 LABEL label2 :
 RETURN void
 END delay
 FUNCTION test :
-PARAM var3
-temp7 := #0
-IF var3 > temp7 GOTO label3
+PARAM var1
+temp6 := #0
+IF var1 > temp6 GOTO label3
 GOTO label4
 LABEL label3 :
-temp9 := #1
-temp10 := var3 - temp9
-var3 := temp10
+temp8 := #1
+temp9 := var1 - temp8
+var1 := temp9
 GOTO label5
 LABEL label4 :
-temp11 := #1
-temp12 := var3 + temp11
-var3 := temp12
+temp10 := #1
+temp11 := var1 + temp10
+var1 := temp11
 LABEL label5 :
-RETURN var3
+RETURN var1
 END test
 FUNCTION main :
-temp13 := #17
-var1 := temp13
-temp14 := #0
-var4 := temp14
+temp12 := #0
+var2 := temp12
 LABEL label6 :
-temp15 := #1
-temp16 := #0
-IF temp15 != temp16 GOTO label7
+temp13 := #1
+temp14 := #0
+IF temp13 != temp14 GOTO label7
 GOTO label8
 LABEL label7 :
-temp17 := #1
-temp18 := var4 + temp17
-var4 := temp18
-ARG var4
-temp19 := CALL test
-temp20 := #2
-temp21 := temp19 + temp20
-var4 := temp21
-temp22 := #-928
-*temp22 := var4
-temp23 := #-926
-temp24 := #16
-temp25 := var4 >> temp24
-*temp23 := temp25
-temp26 := #10
-IF var4 > temp26 GOTO label9
+temp15 := #1
+temp16 := var2 + temp15
+var2 := temp16
+ARG var2
+temp17 := CALL test
+temp18 := #2
+temp19 := temp17 + temp18
+var2 := temp19
+temp20 := #-928
+*temp20 := var2
+temp21 := #-926
+temp22 := #16
+temp23 := var2 >> temp22
+*temp21 := temp23
+temp24 := #10
+IF var2 > temp24 GOTO label9
 GOTO label10
 LABEL label9 :
-temp28 := #0
-var4 := temp28
+temp26 := #0
+var2 := temp26
 LABEL label10 :
 CALL delay
 GOTO label6
 LABEL label8 :
-temp29 := #0
-RETURN temp29
+temp27 := #0
+RETURN temp27
 END main

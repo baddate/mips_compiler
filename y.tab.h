@@ -145,7 +145,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 21 "compiler.y"
+#line 22 "compiler.y"
 
 	struct gramTree* gt;
 

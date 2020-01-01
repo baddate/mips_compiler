@@ -4,7 +4,7 @@
 #include <regex>
 #include <vector>
 #include <time.h>
-#include "tools.h"
+#include "IntoMips.h"
 using namespace std;
 
 /* 全局函数 */
@@ -46,7 +46,10 @@ string returnval;
 int argnum=0;
 vector<int> underline;
 
-vector<string> split(const string &str, const string &pattern)
+IntoMips::IntoMips(string filename) {
+	translate(filename);
+}
+vector<string> IntoMips::split(const string &str, const string &pattern)
 {
     vector<string> res;
     if(str == "")
@@ -109,7 +112,7 @@ vector<string> split(const string &str, const string &pattern)
 // 		}
 // 	}
 // }
-string getReg(string str) {
+string IntoMips::getReg(string str) {
 	//tempVal.pop_back(str);
 	if(regTable.find(str) != regTable.end()) {
 		return regTable.find(str)->second;
@@ -154,7 +157,7 @@ string getReg(string str) {
 	}
 }
 
-void getGlobalVar(string srcfile) {
+void IntoMips::getGlobalVar(string srcfile) {
 	string data;
 	ifstream infile; 
 	infile.open(srcfile);
@@ -167,14 +170,14 @@ void getGlobalVar(string srcfile) {
 		}
 	}
 }
-bool findGlobal(string str) {
+bool IntoMips::findGlobal(string str) {
 	for(int i=0;i< globalVal.size();i++) {
 		if(str == globalVal[i]) 
 			return true;
 	}
 	return false;
 }
-void translate(string filename) {
+void IntoMips::translate(string filename) {
 	string data;
 	ifstream infile; 
 	infile.open(filename);
@@ -534,6 +537,6 @@ void translate(string filename) {
 // 	return false;
 // }
 
-int main() {
-	translate("innerCode.txt");
-}
+// int main() {
+// 	translate("innerCode.txt");
+// }

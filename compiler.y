@@ -5,6 +5,7 @@
 #include "tree.h"
 #include "block.h"
 #include "Praser.h"
+#include "IntoMips.h"
 using namespace std;
 
 extern char *yytext;
@@ -767,6 +768,9 @@ int main(int argc,char* argv[]) {
 
 	freeGramTree(root);
 
+	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
+	IntoMips test = IntoMips("innerCode.txt");
+	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	fclose(yyin);
 	return 0;
 }

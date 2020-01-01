@@ -1,6 +1,4 @@
-int gol=1;
 
-char a;
 void delay() {
     int c = 10;
     c=30000;
@@ -16,7 +14,7 @@ int test(int m) {
 }
 
 int main() {
-    a=0x11;
+
     int led=0;
     while(1) {
         led=led+1;
