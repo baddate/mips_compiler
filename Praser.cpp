@@ -108,7 +108,7 @@ void Praser::praser_jump_statement(struct gramTree* node) {
 			}
 		}
 		else if (node->left->right->name == ";"){//return ;
-			innerCode.addCode("RETURN");
+			innerCode.addCode("RETURN void");
 			if (funcType != "void") {
 				error(node->left->right->line, "You should return " + blockStack.back().func.rtype);
 			}
@@ -630,7 +630,7 @@ struct gramTree* Praser::praser_function_definition(struct gramTree* node) {
 
 	//函数结束后，弹出相应的block
 	blockStack.pop_back();
-	//innerCode.addCode("END FUNCTION " + funcName);
+	innerCode.addCode("END " + funcName);
 	return node->right;
 }
 

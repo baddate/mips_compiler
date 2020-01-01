@@ -30,6 +30,7 @@ string aReg[4] = {"$a0", "$a1", "$a2", "$a3"};
 regex regtemp("temp\\d+",regex::icase);
 regex regvar("var\\d+",regex::icase);
 regex regnum("#\\d+",regex::icase);
+regex regdnum("#-\\d+",regex::icase);
 regex regaddr("\\*temp\\d+",regex::icase);
 vector<string> tokenVal;
 vector<string> tempVal;
@@ -41,8 +42,9 @@ int areg_ok[4] = {0};
 
 map<string, string> regTable; //变量名&寄存器名
 
+string returnval;
 int argnum=0;
-
+vector<int> underline;
 
 vector<string> split(const string &str, const string &pattern)
 {
@@ -135,7 +137,7 @@ string getReg(string str) {
 				if(!treg_ok[i]) {
 					regTable.insert({str, sReg[i]});
 					sreg_ok[i]=1;
-					return tReg[i];
+					return sReg[i];
 				}
 				if(i == 7) { //都分配过了
 					for(int j=0;j<8;j++) {
@@ -198,12 +200,18 @@ void translate(string filename) {
 				cout <<"FUNC"<<endl;
 				outfile << line[1] << ":\n";
 				if(line[1] == "main") {
-					outfile << "\tsw $sp,0($sp)\n\tsw $fp, 8($sp)\n\taddi $sp, $sp, 8\n\taddi $fp, $sp, 12\n";
+					for(int i=0;i<9;i++) {
+						sreg_ok[i] = 0;
+					}
+					for(int i=0;i<8;i++) {
+						treg_ok[i] = 0;
+					}
+					outfile << "\tsw $fp,0($sp)\n\tsw $sp, 8($sp)\n\taddi $fp, $sp, 8\n\taddi $sp, $sp, 12\n";
 				}
 			}
 			else if(line[1] == ":=") {
 				if(line.size() == 3) {
-					if(regex_match(line[2], regnum)) { // #
+					if(regex_match(line[2], regnum) || regex_match(line[2], regdnum)) { // #
 						cout<<line[0] <<"==============="<<endl;
 						
 
@@ -219,13 +227,14 @@ void translate(string filename) {
 						} 
 						else if(regex_match(line[0], regaddr)) {
 							cout <<"dizhi----------"<<line[2] <<" "<<line[0].substr(1,line[0].size())<<endl;
-							outfile <<"\tsw " << getReg(line[2]) << ", " << line[0].substr(1,line[0].size())
+							outfile <<"\tsw " << getReg(line[2]) << ", " << getReg(line[0].substr(1,line[0].size()))
 							<<"($Zero)\n";
 							cout <<"edizhi----------"<<endl;
 						}
 						else {
-							outfile << "\tsw " << getReg(line[2]) << ", " << offset << "($Zero)\n";
-							outfile << "\tlw " << getReg(line[0]) << ", " << offset << "($Zero)\n";
+							outfile << "\tadd " << getReg(line[2]) << ", $Zero, " << getReg(line[0]) << "\n";
+							// outfile << "\tsw " << getReg(line[2]) << ", " << offset << "($Zero)\n";
+							// outfile << "\tlw " << getReg(line[0]) << ", " << offset << "($Zero)\n";
 						}
 						
 					}
@@ -264,8 +273,11 @@ void translate(string filename) {
 					}
 				}
 				else if(line[2] == "CALL") {
-					//outfile << "\tsw $sp, "
-					outfile << "\taddi $sp, $sp, 4\n\tsw $sp,0($sp)\n\tsw $ra, 4($sp)\n\tsw $fp, 8($sp)\n\tjal " 
+					cout <<"CALL-------------------------------\n";
+					for(int i=0;i<8;i++) {
+						outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+					}
+					outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n\tjal " 
 					<< line[3] << "\n";
 				}
 
@@ -297,14 +309,14 @@ void translate(string filename) {
 				else if (line[2] == ">")
 				{
 					cout <<"test if >" <<endl;
-					outfile << "\tsub $t0, " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
-					outfile << "\tblgz $t0, " << line[5] <<"\n";
+					outfile << "\tsub " << getReg(line[3]) << ", " << getReg(line[1]) <<", $t0\n";
+					outfile << "\tbltz $t0, " << line[5] <<"\n";
 				}
 			}
 			else if(line[0] == "PARAM") {
-				outfile <<"\taddi $sp, $sp, -4\n\tsw $sp, " << aReg[argnum] <<"\n";
+				outfile <<"\taddi $t0, $sp, -4\n\tlw " << aReg[argnum] <<", 0($t0)\n";
 				regTable.insert({line[1], aReg[argnum]});
-				argnum--;
+				argnum++;
 			}
 			else if(line[0] == "GOTO") {
 				outfile << "\tj " << line[1] << "\n";
@@ -313,15 +325,37 @@ void translate(string filename) {
 				
 			}
 			else if(line[0] == "ARG") {
-				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 4($sp)\n";
-				argnum++;
+				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 0($sp)\n";
 			}
 			else if(line[0] == "CALL") {
-				outfile << "\taddi $sp, $sp, 4\n\tsw $sp,0($sp)\n\tsw $ra, 4($sp)\n\tsw $fp, 8($sp)\n\tjal " 
+				for(int i=0;i<8;i++) {
+					outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+				}
+				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n\tjal " 
 					<< line[1] << "\n";
 			}
 			else if(line[0] == "RETURN") {
-				outfile << "\tlw $sp,0($sp)\n\tlw $ra, 4($sp)\n\tlw $fp, 8($sp)\n\t j $ra";
+				 returnval = line[1];
+				 cout << returnval<<endl;
+				 continue;
+			}
+			else if(line[0] == "END") {
+				
+				if(line[1] == "main") {
+					outfile << "\taddi $t0, $Zero, 8192\n\tjr $t0\n";
+				}
+				else if(returnval == "void") {
+					for(int i=0;i<8;i++) {
+						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+					}
+					outfile << "\tlw $fp,0($sp)\n\tlw $sp, 4($sp)\n" <<"\tjr $ra\n";
+				}
+				else {
+					for(int i=0;i<8;i++) {
+						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+					}
+					outfile << "\tlw $fp,0($sp)\n\tlw $sp, 4($sp)\n"<< "\tadd " << getReg(returnval) << ", $Zero, $v0\n" <<"\tjr $ra\n";
+				}
 			}
 		}
 	}
