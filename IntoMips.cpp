@@ -4,6 +4,7 @@
 #include <regex>
 #include <vector>
 #include <time.h>
+#include <map>
 #include "IntoMips.h"
 using namespace std;
 
@@ -36,6 +37,8 @@ vector<string> tokenVal;
 vector<string> tempVal;
 vector<string> labelVal;
 vector<string> globalVal;
+
+map<string, string> tempNum;
 int treg_ok[9] = {0};
 int sreg_ok[8] = {0};
 int areg_ok[4] = {0};
@@ -217,7 +220,7 @@ void IntoMips::translate(string filename) {
 					if(regex_match(line[2], regnum) || regex_match(line[2], regdnum)) { // #
 						cout<<line[0] <<"==============="<<endl;
 						
-
+						tempNum.insert({line[0],line[2].substr(1,line[2].size())});
 						outfile << "\taddi " << getReg(line[0]) << ", $Zero, " << line[2].substr(1,line[2].size()) << "\n";
 						cout << "\taddi " << getReg(line[0]) << ", $Zero, " << line[2].substr(1,line[2].size()) << "\n";
 
@@ -230,12 +233,20 @@ void IntoMips::translate(string filename) {
 						} 
 						else if(regex_match(line[0], regaddr)) {
 							cout <<"dizhi----------"<<line[2] <<" "<<line[0].substr(1,line[0].size())<<endl;
-							outfile <<"\tsw " << getReg(line[2]) << ", " << getReg(line[0].substr(1,line[0].size()))
+							map<string,string>::iterator iter = tempNum.begin();
+							string temps;
+							while(iter!=tempNum.end()) {
+								if(iter->first == line[0].substr(1,line[0].size())) {
+									temps=iter->second;
+								}
+								iter++;
+							}
+							outfile <<"\tsw " << getReg(line[2]) << ", " << temps
 							<<"($Zero)\n";
 							cout <<"edizhi----------"<<endl;
 						}
 						else {
-							outfile << "\tadd " << getReg(line[2]) << ", $Zero, " << getReg(line[0]) << "\n";
+							outfile << "\tadd " << getReg(line[0]) << ", $Zero, " << getReg(line[2]) << "\n";
 							// outfile << "\tsw " << getReg(line[2]) << ", " << offset << "($Zero)\n";
 							// outfile << "\tlw " << getReg(line[0]) << ", " << offset << "($Zero)\n";
 						}
@@ -244,10 +255,11 @@ void IntoMips::translate(string filename) {
 				}
 				else if(line.size() == 5) {
 					if(line[3] == "+") {
-						outfile << "\tadd " << getReg(line[2]) << ", " << getReg(line[4]) << ", " <<getReg(line[0]) << "\n";
+						cout << "addddddddddddddddddddddddd\n";
+						outfile << "\tadd " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
 					}
 					else if(line[3] == "-") {
-						outfile << "\tsub " << getReg(line[2]) << ", " << getReg(line[4]) << ", " <<getReg(line[0]) << "\n";
+						outfile << "\tsub " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
 					}
 					else if(line[3] == "*") {
 						outfile << "\tmult " << getReg(line[2]) << ", " << getReg(line[4]) << "\n";
@@ -272,16 +284,17 @@ void IntoMips::translate(string filename) {
 					else if(line[3] == ">>") {
 						cout <<"youyi-----------------" <<endl;
 						// outfile << "\tslt " << getReg(line[0]) << ", " << getReg(line[4]) << ", " <<getReg(line[2]) << "\n";
-						outfile << "\tslrv " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
+						outfile << "\tsrlv " << getReg(line[0]) << ", " << getReg(line[2]) << ", " <<getReg(line[4]) << "\n";
 					}
 				}
 				else if(line[2] == "CALL") {
 					cout <<"CALL-------------------------------\n";
+					outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n";
 					for(int i=0;i<8;i++) {
 						outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
-					outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n\tjal " 
-					<< line[3] << "\n";
+					outfile <<"\tjal " << line[3] << "\n";
+					
 				}
 
 			}
@@ -295,24 +308,24 @@ void IntoMips::translate(string filename) {
 				}
 				else if (line[2] == "<=") /////可能有问题
 				{
-					outfile << "\tsub $t0, " << getReg(line[1]) << ", " << getReg(line[3]) <<"\n";
-					outfile << "\tblgz $t0, " << line[5] <<"\n";
+					outfile << "\tsub $t0, " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
+					outfile << "\tbgez $t0, " << line[5] <<"\n";
 				}
 				else if (line[2] == ">=")
 				{
 					//outfile << "\tslt " << "" << getReg(line[5]) << ", " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
-					outfile << "\tslt $t0" << ", " << getReg(line[1]) << ", " <<getReg(line[3]) << "\n";
+					outfile << "\tsub $t0" << ", " << getReg(line[3]) << ", " <<getReg(line[1]) << "\n";
 					outfile << "\tblez $t0, " << line[5] << "\n";
 				}
 				else if (line[2] == "<")
 				{
-					outfile << "\tslt $t0" << ", " << getReg(line[1]) << ", " <<getReg(line[3]) << "\n";
+					outfile << "\tsub $t0" << ", " << getReg(line[3]) << ", " <<getReg(line[1]) << "\n";
 					outfile << "\tbgtz $t0, " << line[5] << "\n";
 				}
 				else if (line[2] == ">")
 				{
 					cout <<"test if >" <<endl;
-					outfile << "\tsub " << getReg(line[3]) << ", " << getReg(line[1]) <<", $t0\n";
+					outfile << "\tsub $t0, " << getReg(line[3]) << ", " << getReg(line[1]) <<"\n";
 					outfile << "\tbltz $t0, " << line[5] <<"\n";
 				}
 			}
@@ -331,11 +344,11 @@ void IntoMips::translate(string filename) {
 				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 0($sp)\n";
 			}
 			else if(line[0] == "CALL") {
+				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n";
 				for(int i=0;i<8;i++) {
 					outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 				}
-				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n\tjal " 
-					<< line[1] << "\n";
+				outfile <<"\tjal " << line[1] << "\n";
 			}
 			else if(line[0] == "RETURN") {
 				 returnval = line[1];
@@ -351,13 +364,13 @@ void IntoMips::translate(string filename) {
 					for(int i=0;i<8;i++) {
 						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
-					outfile << "\tlw $fp,0($sp)\n\tlw $sp, 4($sp)\n" <<"\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tlw $sp, 4($sp)\n" <<"\tjr $ra\n";
 				}
 				else {
 					for(int i=0;i<8;i++) {
 						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
-					outfile << "\tlw $fp,0($sp)\n\tlw $sp, 4($sp)\n"<< "\tadd " << getReg(returnval) << ", $Zero, $v0\n" <<"\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tlw $sp, 4($sp)\n"<< "\tadd $v0, $Zero, " << getReg(returnval) << "\n\tjr $ra\n";
 				}
 			}
 		}

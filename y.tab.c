@@ -3488,7 +3488,7 @@ int main(int argc,char* argv[]) {
 
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	IntoMips test = IntoMips("innerCode.txt");
-	printf("==&&&&&&&&&&&&&&&&&&&&&&&\n");
+	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	fclose(yyin);
 	return 0;
 }
