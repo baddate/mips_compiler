@@ -294,7 +294,7 @@ void IntoMips::translate(string filename) {
 						outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
 					outfile <<"\tjal " << line[3] << "\n";
-					
+					outfile << "\tadd " << getReg(line[0]) <<" , $Zero, $v0\n";
 				}
 
 			}

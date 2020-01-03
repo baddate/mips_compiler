@@ -20,7 +20,7 @@ label2:
 	lw $s5, 28($sp)
 	lw $s6, 32($sp)
 	lw $s7, 36($sp)
-	lw $fp,0($sp)
+	lw $fp, 0($sp)
 	lw $sp, 4($sp)
 	jr $ra
 test:
@@ -45,7 +45,7 @@ test:
 	lw $s5, 28($sp)
 	lw $s6, 32($sp)
 	lw $s7, 36($sp)
-	lw $fp,0($sp)
+	lw $fp, 0($sp)
 	lw $sp, 4($sp)
 	add $v0, $Zero, $a0
 	jr $ra
@@ -76,6 +76,7 @@ label4:
 	sw $s6, 32($sp)
 	sw $s7, 36($sp)
 	jal test
+	add $t4 , $Zero, $v0
 	add $s1, $Zero, $t4
 	addi $t5, $Zero, -928
 	sw $s1, -928($Zero)
