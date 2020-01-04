@@ -338,7 +338,8 @@ void IntoMips::translate(string filename) {
 				outfile << "\tj " << line[1] << "\n";
 			}
 			else if(line[0] == "DEC") {
-				
+				int i = strtoint(line[1].substr(5,line[1].size()));
+				outfile << "\t sw $Zero, " << sReg[i] << ", 0(" << getReg(line[2]) << ")\n";
 			}
 			else if(line[0] == "ARG") {
 				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 0($sp)\n";

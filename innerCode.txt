@@ -13,45 +13,30 @@ GOTO label0
 LABEL label2 :
 RETURN void
 END delay
-FUNCTION test :
-PARAM var1
-temp5 := #2
-temp6 := var1 * temp5
-temp7 := #2
-temp8 := temp6 / temp7
-temp9 := #1
-temp10 := temp8 + temp9
-var1 := temp10
-RETURN var1
-END test
 FUNCTION main :
-temp11 := #0
-var2 := temp11
+temp5 := #0
+var1 := temp5
 LABEL label3 :
-temp12 := #1
-temp13 := #0
-IF temp12 != temp13 GOTO label4
+temp6 := #1
+temp7 := #0
+IF temp6 != temp7 GOTO label4
 GOTO label5
 LABEL label4 :
-ARG var2
-temp14 := CALL test
-var2 := temp14
-temp15 := #-928
-*temp15 := var2
-temp16 := #-926
-temp17 := #16
-temp18 := var2 >> temp17
-*temp16 := temp18
-temp19 := #10
-IF var2 > temp19 GOTO label6
+temp8 := #2
+temp9 := var1 + temp8
+var1 := temp9
+temp10 := #-928
+*temp10 := var1
+temp11 := #10
+IF var1 > temp11 GOTO label6
 GOTO label7
 LABEL label6 :
-temp21 := #0
-var2 := temp21
+temp13 := #0
+var1 := temp13
 LABEL label7 :
 CALL delay
 GOTO label3
 LABEL label5 :
-temp22 := #0
-RETURN temp22
+temp14 := #0
+RETURN temp14
 END main

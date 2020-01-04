@@ -769,7 +769,7 @@ int main(int argc,char* argv[]) {
 	freeGramTree(root);
 
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
-	IntoMips test = IntoMips("innerCode.txt");
+	//IntoMips test = IntoMips("innerCode.txt");
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	fclose(yyin);
 	return 0;
