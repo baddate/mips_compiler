@@ -212,7 +212,7 @@ void IntoMips::translate(string filename) {
 					for(int i=0;i<8;i++) {
 						treg_ok[i] = 0;
 					}
-					outfile << "\tsw $fp,0($sp)\n\tsw $sp, 8($sp)\n\taddi $fp, $sp, 8\n\taddi $sp, $sp, 12\n";
+					outfile << "\tsw $fp,0($sp)\n\tsw $ra,4($sp)\n\tsw $sp, 8($sp)\n\taddi $fp, $sp, 8\n\taddi $sp, $sp, 12\n";
 				}
 			}
 			else if(line[1] == ":=") {
@@ -289,9 +289,9 @@ void IntoMips::translate(string filename) {
 				}
 				else if(line[2] == "CALL") {
 					cout <<"CALL-------------------------------\n";
-					outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n";
+					outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $ra,4($sp)\n\tsw $sp, 8($sp)\n";
 					for(int i=0;i<8;i++) {
-						outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+						outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+12) << "($sp)\n";
 					}
 					outfile <<"\tjal " << line[3] << "\n";
 					outfile << "\tadd " << getReg(line[0]) <<" , $Zero, $v0\n";
@@ -345,9 +345,9 @@ void IntoMips::translate(string filename) {
 				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 0($sp)\n";
 			}
 			else if(line[0] == "CALL") {
-				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $sp, 4($sp)\n";
+				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $ra,4($sp)\n\tsw $sp, 8($sp)\n";
 				for(int i=0;i<8;i++) {
-					outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+					outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+12) << "($sp)\n";
 				}
 				outfile <<"\tjal " << line[1] << "\n";
 			}
@@ -365,13 +365,13 @@ void IntoMips::translate(string filename) {
 					for(int i=0;i<8;i++) {
 						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
-					outfile << "\tlw $fp, 0($sp)\n\tlw $sp, 4($sp)\n" <<"\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tsw $ra,4($sp)\n\tlw $sp, 8($sp)\n" <<"\tjr $ra\n";
 				}
 				else {
 					for(int i=0;i<8;i++) {
 						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
 					}
-					outfile << "\tlw $fp, 0($sp)\n\tlw $sp, 4($sp)\n"<< "\tadd $v0, $Zero, " << getReg(returnval) << "\n\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tsw $ra,4($sp)\n\tlw $sp, 8($sp)\n"<< "\tadd $v0, $Zero, " << getReg(returnval) << "\n\tjr $ra\n";
 				}
 			}
 		}

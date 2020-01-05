@@ -3485,9 +3485,9 @@ int main(int argc,char* argv[]) {
 	Praser praser(root);
 
 	freeGramTree(root);
-
+	//praser.~Praser();
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
-	IntoMips test = IntoMips("innerCode.txt");
+	//IntoMips test = IntoMips("innerCode.txt");
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	fclose(yyin);
 	return 0;

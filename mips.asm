@@ -21,10 +21,12 @@ label2:
 	lw $s6, 32($sp)
 	lw $s7, 36($sp)
 	lw $fp, 0($sp)
-	lw $sp, 4($sp)
+	sw $ra,4($sp)
+	lw $sp, 8($sp)
 	jr $ra
 main:
 	sw $fp,0($sp)
+	sw $ra,4($sp)
 	sw $sp, 8($sp)
 	addi $fp, $sp, 8
 	addi $sp, $sp, 12
@@ -46,3 +48,24 @@ label4:
 	bltz $t0, label6
 	j label7
 label6:
+	addi $t8, $Zero, 0
+	add $s1, $Zero, $t8
+label7:
+	addi $sp, $sp, 4
+	sw $fp,0($sp)
+	sw $ra,4($sp)
+	sw $sp, 8($sp)
+	sw $s0, 12($sp)
+	sw $s1, 16($sp)
+	sw $s2, 20($sp)
+	sw $s3, 24($sp)
+	sw $s4, 28($sp)
+	sw $s5, 32($sp)
+	sw $s6, 36($sp)
+	sw $s7, 40($sp)
+	jal delay
+	j label3
+label5:
+	addi $t9, $Zero, 0
+	addi $t0, $Zero, 8192
+	jr $t0

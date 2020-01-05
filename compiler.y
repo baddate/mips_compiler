@@ -767,7 +767,7 @@ int main(int argc,char* argv[]) {
 	Praser praser(root);
 
 	freeGramTree(root);
-
+	//praser.~Praser();
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");
 	//IntoMips test = IntoMips("innerCode.txt");
 	printf("&&&&&&&&&&&&&&&&&&&&&&&\n");

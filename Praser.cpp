@@ -1,6 +1,8 @@
 #include"Praser.h"
 #include"block.h"
 #include "tools.h"
+#include "IntoMips.h"
+#include <fstream>
 #include<map>
 using namespace std;
 
@@ -1662,9 +1664,11 @@ int Praser::getBreakBlockNumber() {
 void Praser::error(int line, string error) {
 
 	print_code();
-
+	ofstream out;
+	out.open("error.txt");
 	cout << "Error! line " << line << ": ";
 	cout << error << endl;
+	out << "Error! line " << line << ": " << error << "\n";
 	exit(1);
 }
 
@@ -1688,5 +1692,7 @@ void Praser::print_map() {
 
 void Praser::print_code() {
 	innerCode.printCode();
+	printf("%s\n", "+++++++++++++tomips++++++++");
+	IntoMips test = IntoMips("innerCode.txt");
 }
 

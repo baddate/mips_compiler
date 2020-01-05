@@ -24,8 +24,8 @@ void InnerCode::printCode() {
 		cout << s << endl;
 		out << s << "\n";
 	}
-	printf("%s\n", "+++++++++++++tomips++++++++");
-	IntoMips test = IntoMips("innerCode.txt");
+	// printf("%s\n", "+++++++++++++tomips++++++++");
+	// IntoMips test = IntoMips("innerCode.txt");
 }
 
 string InnerCode::createCodeforVar(string tempname, string op, varNode node1, varNode node2) {
