@@ -3,8 +3,11 @@
 #include "tools.h"
 #include "IntoMips.h"
 #include <fstream>
+#include <iostream>
 #include<map>
 using namespace std;
+
+ofstream out;
 
 Praser::Praser(gramTree* root) {
 	this->root = root;
@@ -1664,8 +1667,8 @@ int Praser::getBreakBlockNumber() {
 void Praser::error(int line, string error) {
 
 	print_code();
-	ofstream out;
-	out.open("error.txt");
+	
+	out.open("error.txt", ios::app);
 	cout << "Error! line " << line << ": ";
 	cout << error << endl;
 	out << "Error! line " << line << ": " << error << "\n";
