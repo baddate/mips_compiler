@@ -16,6 +16,7 @@ Praser::Praser(gramTree* root) {
 
 Praser::~Praser() {
 	//print_map();
+	cout<<"MAPPPPPPPPPPPPPPPPPPPPPPPPPP\n";
 	print_code();
 }
 

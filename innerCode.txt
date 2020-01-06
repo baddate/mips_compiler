@@ -23,20 +23,24 @@ IF temp6 != temp7 GOTO label4
 GOTO label5
 LABEL label4 :
 temp8 := #2
-temp9 := var1 + temp8
-var1 := temp9
-temp10 := #-928
-*temp10 := var1
-temp11 := #10
-IF var1 > temp11 GOTO label6
+temp9 := var1 * temp8
+temp10 := #2
+temp11 := temp9 / temp10
+temp12 := #1
+temp13 := temp11 + temp12
+var1 := temp13
+temp14 := #-928
+*temp14 := var1
+temp15 := #10
+IF var1 > temp15 GOTO label6
 GOTO label7
 LABEL label6 :
-temp13 := #0
-var1 := temp13
+temp17 := #0
+var1 := temp17
 LABEL label7 :
 CALL delay
 GOTO label3
 LABEL label5 :
-temp14 := #0
-RETURN temp14
+temp18 := #0
+RETURN temp18
 END main

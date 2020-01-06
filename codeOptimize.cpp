@@ -14,7 +14,7 @@ void Optimize::dropTrumpTemp(vector<string>& codelist) {
 	cout<<"dropTrumpTemp"<<endl;
 	set<int> lines;
 	for (auto p = tempMessage.begin(); p != tempMessage.end(); p++) {
-		//cout << p->first << " " << p->second.num << endl;
+		cout << p->first << " " << p->second.num << endl;
 		if (p->second.num == 1) {
 			int line = p->second.line;
 			lines.insert(line);
@@ -34,10 +34,10 @@ void Optimize::establishMap(vector<string>& codelist) {
 		int begin = 0;
 		int w = str.find("temp", begin);
 		while (w != string::npos) {
-
+			//cout <<"establishMap==========="<<str<<endl;
 			int end = str.find(" ", w);
 			string name = str.substr(w, end - w);
-
+			cout <<"establishMap==========="<<name<<endl;
 			if (tempMessage.find(name) != tempMessage.end()) {
 				if (str.find("CALL") != string::npos)
 					tempMessage[name].num += 1000;

@@ -345,7 +345,7 @@ void IntoMips::translate(string filename) {
 				outfile << "\taddi $sp, $sp, 4\n"<<"\tsw "<< getReg(line[1]) <<", 0($sp)\n";
 			}
 			else if(line[0] == "CALL") {
-				outfile << "\taddi $sp, $sp, 4\n\tsw $fp,0($sp)\n\tsw $ra,4($sp)\n\tsw $sp, 8($sp)\n";
+				outfile << "\taddi $sp, $sp, 4\n\tsw $fp, 0($sp)\n\tsw $ra, 4($sp)\n\tsw $sp, 8($sp)\n";
 				for(int i=0;i<8;i++) {
 					outfile << "\tsw " << sReg[i] << ", " << inttostr(i*4+12) << "($sp)\n";
 				}
@@ -363,15 +363,15 @@ void IntoMips::translate(string filename) {
 				}
 				else if(returnval == "void") {
 					for(int i=0;i<8;i++) {
-						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+12) << "($sp)\n";
 					}
-					outfile << "\tlw $fp, 0($sp)\n\tsw $ra,4($sp)\n\tlw $sp, 8($sp)\n" <<"\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tlw $ra, 4($sp)\n\tlw $sp, 8($sp)\n" <<"\tjr $ra\n";
 				}
 				else {
 					for(int i=0;i<8;i++) {
-						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+8) << "($sp)\n";
+						outfile << "\tlw " << sReg[i] << ", " << inttostr(i*4+12) << "($sp)\n";
 					}
-					outfile << "\tlw $fp, 0($sp)\n\tsw $ra,4($sp)\n\tlw $sp, 8($sp)\n"<< "\tadd $v0, $Zero, " << getReg(returnval) << "\n\tjr $ra\n";
+					outfile << "\tlw $fp, 0($sp)\n\tlw $ra,4($sp)\n\tlw $sp, 8($sp)\n"<< "\tadd $v0, $Zero, " << getReg(returnval) << "\n\tjr $ra\n";
 				}
 			}
 		}

@@ -1,1 +1,10 @@
+Error! line 12: Undefined variable le1
 Error! line 12: Undefined variable led1
+Error! line 12: Undefined variable err
+Error! line 11: Wrong type to variable led: double to int
+Error! line 9: Undefined variable b
+Error! line 10: return type doesn't equal to function return type.
+Error! line 15: Undefined function read
+Error! line 15: Undefined function read
+Error! line 10: return type doesn't equal to function return type.
+Error! line 13: Undefined variable led
